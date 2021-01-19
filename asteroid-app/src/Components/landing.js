@@ -9,14 +9,24 @@ import { API_KEY } from "../Constants/api_data";
 const styles = {
   root: {
     textAlign: "center",
+    marginTop:'20%'
   },
+  head:{
+    fontSize:'28px',
+    color:'#000000',
+    opacity:'0.5',
+    marginBottom:'30px'
+  },
+  submit:{
+      margin:'20px'
+  }
 };
 
 class Landing extends Component {
   state = {
     text: "",
-    randomasteroidId:null,
-    loading:true
+    randomasteroidId: null,
+    loading: false,
   };
   handleChange = (e) => {
     this.setState({
@@ -55,62 +65,71 @@ class Landing extends Component {
     }
   };
   handleRandom = () => {
+    this.setState({
+      loading: true,
+    });
     axios
       .get(`https://api.nasa.gov/neo/rest/v1/neo/browse?api_key=${API_KEY}`)
       .then((res) => {
-          console.log(res.data.near_earth_objects[19],res.data.near_earth_objects.length * Math.random())
-            const random_no = parseInt((res.data.near_earth_objects).length * Math.random())
-            // this.setState({
-            //     randomasteroidId:res.data.near_earth_objects[random_no],
-            //     loading : false
-            // })
-            const randomasteroidId = res.data.near_earth_objects[random_no].id
-            console.log("random asteroid:", randomasteroidId)
-            axios.get(`https://api.nasa.gov/neo/rest/v1/neo/${randomasteroidId}?api_key=${API_KEY}`).then
-            ((response)=>{
-                const asteroid_data = {
-                    name: response.data.name,
-                    url: response.data.nasa_jpl_url,
-                    is_hazardious: response.data.is_potentially_hazardous_asteroid,
-                  };
-                this.props.history.push({
-                    pathname: "/details",
-                    asteroid_data: asteroid_data,
-                  });
-            }
-            )
-            .catch((err) => {
-                  console.log("error!!!",err);
-                  window.alert("Something went Wrong!!");
-              });
+        console.log(
+          res.data.near_earth_objects[19],
+          res.data.near_earth_objects.length * Math.random()
+        );
+        const random_no = parseInt(
+          res.data.near_earth_objects.length * Math.random()
+        );
+
+        const randomasteroidId = res.data.near_earth_objects[random_no].id;
+        console.log("random asteroid:", randomasteroidId);
+        axios
+          .get(
+            `https://api.nasa.gov/neo/rest/v1/neo/${randomasteroidId}?api_key=${API_KEY}`
+          )
+          .then((response) => {
+            const asteroid_data = {
+              name: response.data.name,
+              url: response.data.nasa_jpl_url,
+              is_hazardious: response.data.is_potentially_hazardous_asteroid,
+            };
+            this.props.history.push({
+              pathname: "/details",
+              asteroid_data: asteroid_data,
+            });
+          })
+          .catch((err) => {
+            console.log("error!!!", err);
+            window.alert("Something went Wrong!!");
+          });
       });
   };
   render() {
     const { classes } = this.props;
     return (
       <>
-        <form>
           <div className={classes.root}>
+              <div className={classes.head}>Asteroid Information Center</div>
             <TextField
-              variant="filled"
+            //   variant="filled"
               label="Enter Asteroid ID"
               helperText="Input Integers only"
               type="number"
               onChange={this.handleChange}
             />
+            <br/>
             <Button
               variant="contained"
               color="primary"
               onClick={this.handleSubmit}
               disabled={this.state.text.length < 1 ? true : false}
+              className={classes.submit}
             >
               Submit
             </Button>
+            <Button variant="contained" color="primary" onClick={this.handleRandom}>
+            Random Asteroid
+            </Button>
+        {this.state.loading ? "...Generating" : ""}
           </div>
-        </form>
-        <Button variant="contained" color="primary" onClick={this.handleRandom}>
-          Random Asteroid
-        </Button>
       </>
     );
   }
