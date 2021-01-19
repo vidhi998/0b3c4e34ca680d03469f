@@ -1,2 +1,5 @@
-# 0b3c4e34ca680d03469f
-Repo for builder.ai
+# clone the repository
+# run the following commands:
+  # cd asteroid-app
+  # npm i
+  # npm start
