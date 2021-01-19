@@ -70,7 +70,7 @@ export default function AsteroidDetail (props)  {
                     nasa_jpl_url  : 
                     </Typography>
                     <Typography  className={classes.val}  component='span'>
-                    {data.url}
+                    <a href={data.url} target='_blank'>{data.url}</a>
                     </Typography>
                     <br/>
                     <Typography className={classes.attr}   component='span'>
